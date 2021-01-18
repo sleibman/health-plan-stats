@@ -26,12 +26,16 @@ Read on for more details...
 * [Running the Code](#running-the-code)
 * [Testing](#testing)
 * [Next Steps](#next-steps)
+  * [Platforms](#platforms)
   * [Configurability](#configurability)
   * [Documentation](#documentation)
   * [Packaging](#packaging)
   * [Containerization](#containerization)
   * [Deployment](#deployment)
   * [Extending Functionality](#extending-functionality)
+  * [Performance](#performance)
+* [Just for fun - plotting the data](#just-for-fun---plotting-the-data)
+* [Questions?](#questions) 
 
 ## Overview
 This is an implementation of the "Second Lowest Cost Silver Plan" assignment described in the 
@@ -101,6 +105,11 @@ boilerplate code than unittest and a variety of test execution conveniences.
 The guidelines for the project stated that effort should be limited to three hours.
 If more time were to be allocated to the challenge, the following would be worth addressing:
 
+### Platforms
+This was built on Mac OSX, tested on Mac OSX and Linux. 
+Please please please let me know if you're trying this on Windows and get stuck.
+Windows testing would be a future task, given a longer window of time.
+
 ### Configurability
 Add command line options to override file locations/names.
 
@@ -141,3 +150,44 @@ in a way that avoids being overly generalized when doing so would interfere with
 Nevertheless, good design is characterized by extensibility, and the code has been organized in a way that should make
 it easy to add new outputs derived from some other function of the input data.
 
+### Performance
+With the sample data set provided, performance is not an issue, and the entire script takes about a second to run to 
+completion:
+```
+% time ./process_plan_rates.py > /dev/null 2>&1
+./process_plan_rates.py > /dev/null 2>&1  1.22s user 0.17s system 194% cpu 0.711 total
+```
+The code works by loading all data into memory, which would start to become an issue if there were three orders of
+magnitude more input data (two-ish gigabytes, instead of the current 2 megabytes). The statistics for each zip code are
+independent from each other, so it would be possible to stream the list currently represented by the slcsp.csv file. 
+
+By inserting timers into the code, I can see that (on 2.6 GHz 6-Core Intel Core i7 mac laptop) the work to produce a
+a result for each zip code takes about 8 milliseconds. That's the run time for the slcsp.py:slcsp() function, which
+relies on data already being loaded into pandas DataFrames in memory.
+
+Unlike the ZIP code list in the slcsp file, it's necessary to do the equivalent of a relational join on the data inside
+the plans.csv and zips.csv files, so streaming the data from those is not practical, though there would still be the
+opportunity to logically shard on something like the US State field in the data. In any case, the number of counties and
+associated health plans in the US is far too small for data size to be a concern in this way. The more likely 
+performance challenge would come when more complicated analysis is desired, and would be handled by considering the
+algorithmic approach to that particular task.
+
+## Just for fun - plotting the data
+
+Purely for the fun of it, I plotted the SLCSP data for each county specified in the sample slcsp.csv file.
+The results:
+![image](images/newplot.png)
+
+Achieved by including the FIPS county code in a results_df DataFrame and running:
+```
+import plotly.figure_factory as ff
+r = result_df.dropna()  # Drop rows with no defined SLSCP value
+fig = ff.create_choropleth(fips=r.fips, values=r.rate)
+fig.layout.template = None
+fig.show()
+```
+Note: Installation and configuration of plotly and plotly.figure_factory are beyond the scope of this README file.
+
+## Questions?
+
+Please contact me (Steve Leibman <sleibman@gmail.com>) if you're curious about any of this. 
