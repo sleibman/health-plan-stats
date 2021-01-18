@@ -1,6 +1,6 @@
 # health-plan-stats
 
-## Quick Start
+## Quick Start :rocket:
 No time to read everything below? In most cases, you'll be able to run this code with these steps:
 
 1. Clone the git repository 
@@ -19,6 +19,20 @@ No time to read everything below? In most cases, you'll be able to run this code
 
 Read on for more details...
 
+## Table of Contents
+* [Quick Start](#quick-start-rocket)
+* [Overview](#overview)
+* [Setting Up Your Environment](#setting-up-your-environment)
+* [Running the Code](#running-the-code)
+* [Testing](#testing)
+* [Next Steps](#next-steps)
+  * [Configurability](#configurability)
+  * [Documentation](#documentation)
+  * [Packaging](#packaging)
+  * [Containerization](#containerization)
+  * [Deployment](#deployment)
+  * [Extending Functionality](#extending-functionality)
+
 ## Overview
 This is an implementation of the "Second Lowest Cost Silver Plan" assignment described in the 
 [homework.adhoc.team assignments](https://homework.adhoc.team/slcsp/). 
@@ -27,6 +41,26 @@ It is a sample problem in which the goal is to identify the second lowest cost s
 codes. The SLCSP is important to our hypothetical users because - in a benchmarking strategy not unlike my algorithm dictating the 
 choice of the second cheapest glass of wine in a fancy restaurant - it represents the benchmark health plan in a
 particular area. This is used to compute the corresponding tax credit for qualifying individuals and families.
+
+
+### Setting Up Your Environment
+If your python environment doesn't already have all the necessary packages, you'll see an error like the following:
+```
+ModuleNotFoundError: No module named 'numpy'
+```
+In this case, install the prerequisites via `pip`. It is recommended that you use a python virtualenv in order to avoid
+polluting your existing python environment. Example:
+```
+mkdir ~/venvs
+(cd ~/venvs && python3 -m venv slcsp)
+source ~/venvs/slcsp/bin/activate 
+pip install -r requirements.txt
+``` 
+
+Note: In a more complete partner deliverable, I would package the environment using a tool like Docker (see 'Next Steps'), but
+for the case of an interviewer quickly evaluating a code submission, it seems like a safer bet to not assume an existing
+installation of the Docker tool suite.
+
 
 ## Running the code
 As per the assignment specification, the code expects three input csv files controlling the behavior of a given run, and
@@ -49,24 +83,6 @@ Example:
 ```
 
 
-### Setting up your environment
-If your python environment doesn't already have all the necessary packages, you'll see an error like the following:
-```
-ModuleNotFoundError: No module named 'numpy'
-```
-In this case, install the prerequisites via `pip`. It is recommended that you use a python virtualenv in order to avoid
-polluting your existing python environment. Example:
-```
-mkdir ~/venvs
-(cd ~/venvs && python3 -m venv slcsp)
-source ~/venvs/slcsp/bin/activate 
-pip install -r requirements.txt
-``` 
-
-Note: In a more complete partner deliverable, I would package the environment using a tool like Docker (see 'Next Steps'), but
-for the case of an interviewer quickly evaluating a code submission, it seems like a safer bet to not assume an existing
-installation of the Docker tool suite.
-
 ## Testing
 ```
 cd <top_level>
@@ -79,7 +95,6 @@ boilerplate code than unittest and a variety of test execution conveniences.
 
 
 ## Next Steps
-
 The guidelines for the project stated that effort should be limited to three hours.
 If more time were to be allocated to the challenge, the following would be worth addressing:
 
