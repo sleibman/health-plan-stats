@@ -44,6 +44,9 @@ particular area. This is used to compute the corresponding tax credit for qualif
 
 
 ### Setting Up Your Environment
+This code uses Python 3, and Python 2 will not work. Confirm that you have `python3` as an executable in your shell
+search path, or that `python -V` shows a 3.x version.
+
 If your python environment doesn't already have all the necessary packages, you'll see an error like the following:
 ```
 ModuleNotFoundError: No module named 'numpy'
