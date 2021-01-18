@@ -38,12 +38,15 @@ This is an implementation of the "Second Lowest Cost Silver Plan" assignment des
 [homework.adhoc.team assignments](https://homework.adhoc.team/slcsp/). 
 
 It is a sample problem in which the goal is to identify the second lowest cost silver plan (SLCSP) for a group of ZIP
-codes. The SLCSP is important to our hypothetical users because - in a benchmarking strategy not unlike my algorithm dictating the 
-choice of the second cheapest glass of wine in a fancy restaurant - it represents the benchmark health plan in a
+codes. The SLCSP is important to our hypothetical users because – in a benchmarking strategy not unlike my algorithm dictating the 
+choice of the second cheapest glass of wine in a fancy restaurant – it represents the benchmark health plan in a
 particular area. This is used to compute the corresponding tax credit for qualifying individuals and families.
 
 
 ### Setting Up Your Environment
+This code uses Python 3, and Python 2 will not work. Confirm that you have `python3` as an executable in your shell
+search path, or that `python -V` shows a 3.x version.
+
 If your python environment doesn't already have all the necessary packages, you'll see an error like the following:
 ```
 ModuleNotFoundError: No module named 'numpy'

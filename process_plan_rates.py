@@ -15,6 +15,7 @@ helpful to redirect stderr to a file, via:
 """
 
 import logging
+import os
 import pandas as pd
 
 from healthplans import slcsp
@@ -32,6 +33,13 @@ def load_and_process_csv(slcsp_file, plans_file, zips_file):
     Returns:
         str: A string in csv format, suitable for writing to stdout or a csv file.
     """
+
+    # Notice that we force ZIP codes to be treated as non-numeric strings, because they are identifiers with things like
+    # leading zeros and no meaningful numeric operations. Same with county codes, which happen to be FIPS codes with
+    # properties similar to ZIPs.
+    # We allow the plan rates to be represented as floats, even though they are currency values. If the application
+    # were extended to manipulate these values in any way, this would merit some care in order to ensure the desired
+    # rounding behavior.
     desired_zipcodes_df = pd.read_csv(slcsp_file, dtype={'zipcode': 'str'})
     plans_df = pd.read_csv(plans_file, dtype={'plan_id': 'str'})
     zips_df = pd.read_csv(zips_file, dtype={'zipcode': 'str', 'county_code': 'str'})
@@ -47,10 +55,9 @@ if __name__ == "__main__":
 
     # TODO: Provide the ability to override input file paths on the command line or via config file.
 
-    # Notice that we force ZIP codes to be treated as non-numeric strings, because they are identifiers with things like
-    # leading zeros and no meaningful numeric operations. Same with county codes, which happen to be FIPS codes with
-    # properties similar to ZIPs.
-    # We allow the plan rates to be represented as floats, even though they are currency values. If the application
-    # were extended to manipulate these values in any way, this would merit some care in order to ensure the desired
-    # rounding behavior.
-    print(load_and_process_csv('sample_data/slcsp.csv', 'sample_data/plans.csv', 'sample_data/zips.csv'))
+    top_level_dir = os.path.dirname(os.path.realpath(__file__))
+    sample_data_dir = os.path.join(top_level_dir, 'sample_data')
+    slcsp_csv = os.path.join(sample_data_dir, 'slcsp.csv')
+    plans_csv = os.path.join(sample_data_dir, 'plans.csv')
+    zips_csv = os.path.join(sample_data_dir, 'zips.csv')
+    print(load_and_process_csv(slcsp_csv, plans_csv, zips_csv))
