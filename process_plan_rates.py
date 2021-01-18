@@ -17,6 +17,7 @@ helpful to redirect stderr to a file, via:
 import logging
 import os
 import pandas as pd
+import timeit
 
 from healthplans import slcsp
 
@@ -54,10 +55,11 @@ if __name__ == "__main__":
                         format='%(asctime)s - %(levelname)s - %(message)s')
 
     # TODO: Provide the ability to override input file paths on the command line or via config file.
-
+    starttime = timeit.default_timer()
     top_level_dir = os.path.dirname(os.path.realpath(__file__))
     sample_data_dir = os.path.join(top_level_dir, 'sample_data')
     slcsp_csv = os.path.join(sample_data_dir, 'slcsp.csv')
     plans_csv = os.path.join(sample_data_dir, 'plans.csv')
     zips_csv = os.path.join(sample_data_dir, 'zips.csv')
     print(load_and_process_csv(slcsp_csv, plans_csv, zips_csv))
+    print("The time difference is :", timeit.default_timer() - starttime)
