@@ -188,8 +188,8 @@ fig.show()
 ```
 Note: Installation and configuration of plotly and plotly.figure_factory are beyond the scope of this README file.
 
-...and for more, just for fun, here's a plot with SLCSP rates for all ZIP codes in the zips.csv file that have counties
-with unambiguous data. Done with a little more DataFrame manipulation and
+...and for more, just for fun, here's a plot with SLCSP rates for all counties in the zips.csv file that have an
+unambiguous SLCSP. Done with a little more DataFrame manipulation and then plotting by running:
 ```
 import plotly.figure_factory as ff
 results_df = slcsp.process_rates(None, plans_df, zips_df)
@@ -200,7 +200,7 @@ fig = ff.create_choropleth(fips=r.fips, values=r.rate, binning_endpoints=endpoin
 fig.layout.template = None
 fig.show()
 ```
-![image](images/all_zips.png)
+![image](images/all_fips.png)
 
 
 ## Questions?
