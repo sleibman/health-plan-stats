@@ -8,6 +8,7 @@ set of output results.
 
 import logging
 import numpy as np
+import pandas as pd
 import timeit
 
 def fips(zipcode, plans_df, zips_df):
@@ -123,11 +124,21 @@ def process_rates(desired_zipcodes_df, plans_df, zips_df):
     Returns:
         pandas.DataFrame: A copy of desired_zipcodes_df with the 'rate' column populated with results.
     """
-    rates = desired_zipcodes_df.loc[:, 'zipcode'].map(lambda zip: slcsp(zip, plans_df, zips_df))
 
-    fips_list = desired_zipcodes_df.loc[:, 'zipcode'].map(lambda zip: fips(zip, plans_df, zips_df))
+    # howzabout all zip codes
+    all_zips = pd.Series(zips_df.zipcode.unique())  # .head()
+    #all_zips = desired_zipcodes_df.loc[:, 'zipcode']
+    print(f'len of all_zips: {len(all_zips)}')
+    expected_time = .01 * len(all_zips)
+    print(f'expected time: {expected_time} seconds')
 
-    results_df = desired_zipcodes_df.copy()
-    results_df.loc[:, 'rate'] = rates
-    results_df.loc[:, 'fips'] = fips_list
+    rates = all_zips.map(lambda zip: slcsp(zip, plans_df, zips_df))
+
+    fips_list = all_zips.map(lambda zip: fips(zip, plans_df, zips_df))
+
+    #results_df = desired_zipcodes_df.copy()
+    #results_df.loc[:, 'rate'] = rates
+    #results_df.loc[:, 'fips'] = fips_list
+
+    results_df = pd.DataFrame({'fips': fips_list, 'rate': rates})
     return results_df
