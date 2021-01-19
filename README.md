@@ -196,7 +196,7 @@ results_df = slcsp.process_rates(None, plans_df, zips_df)
 r = results_df.dropna()
 r = r.drop_duplicates(subset=['fips'])
 binning_endpoints=list(np.mgrid[r.rate.min():r.rate.max():20j])
-fig = ff.create_choropleth(fips=r.fips, values=r.rate, binning_endpoints=endpoints)
+fig = ff.create_choropleth(fips=r.fips, values=r.rate, binning_endpoints=endpoints, round_legend_values=True)
 fig.layout.template = None
 fig.show()
 ```
