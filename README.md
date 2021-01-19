@@ -12,7 +12,7 @@ No time to read everything below? In most cases, you'll be able to run this code
     cd health-plan-stats
     pip install -r requirements.txt
     ```
-3. Run the code and observe results on stdout (in ths example, discarding stderr)
+3. Run the code and observe results on stdout (discarding stderr in this example)
     ```
     ./process_plan_rates.py 2> /dev/null
     ```
@@ -187,6 +187,21 @@ fig.layout.template = None
 fig.show()
 ```
 Note: Installation and configuration of plotly and plotly.figure_factory are beyond the scope of this README file.
+
+...and for more, just for fun, here's a plot with SLCSP rates for all ZIP codes in the zips.csv file that have counties
+with unambiguous data. Done with a little more DataFrame manipulation and
+```
+import plotly.figure_factory as ff
+results_df = slcsp.process_rates(None, plans_df, zips_df)
+r = results_df.dropna()
+r = r.drop_duplicates(subset=['fips'])
+binning_endpoints=list(np.mgrid[r.rate.min():r.rate.max():20j])
+fig = ff.create_choropleth(fips=r.fips, values=r.rate, binning_endpoints=endpoints)
+fig.layout.template = None
+fig.show()
+```
+![image](images/all_zips.png)
+
 
 ## Questions?
 

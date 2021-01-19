@@ -110,8 +110,29 @@ def slcsp(zipcode, plans_df, zips_df):
     #print("The time difference is :", timeit.default_timer() - starttime)
     return unique_rates[1]
 
+def slcsp_from_fips(fips, plans_df, zips_df):
+    matching_rows = zips_df.loc[:, 'county_code'] == fips
+    if not matching_rows.any():
+        raise KeyError
+    matching_fips_df = zips_df.loc[matching_rows, :]
+    rate_area = matching_fips_df.rate_area.iloc[0]
+    if not (rate_area == matching_fips_df.rate_area).all():
+        logging.info(f"fips {fips}: More than one rate area matches; SLCSP is ambiguous.")
+        return np.nan
+    state = matching_fips_df.state.iloc[0]
+    if not (state == matching_fips_df.state).all():
+        logging.info(f"fips {fips}: Spans more than one state.")
+    rates = plans_df.loc[(plans_df['state'] == state) & (plans_df['rate_area'] == rate_area) & (
+            plans_df['metal_level'] == 'Silver'), 'rate']
+    unique_rates = rates.unique()
+    unique_rates.sort()
+    if len(unique_rates) < 2:
+        logging.info(f"Not enough rates in fips code {fips} to define a second lowest cost rate.")
+        return np.nan
+    return unique_rates[1]
 
-def process_rates(desired_zipcodes_df, plans_df, zips_df):
+
+def process_rates(plans_df, zips_df):
     """Reads input csv files into pandas DataFrames and executes core SLCSP logic.
 
     Example input files can be found at https://github.com/sleibman/health-plan-stats/sample_data
@@ -126,19 +147,19 @@ def process_rates(desired_zipcodes_df, plans_df, zips_df):
     """
 
     # howzabout all zip codes
-    all_zips = pd.Series(zips_df.zipcode.unique())  # .head()
+    all_fips = pd.Series(zips_df.county_code.unique())  # .head()
     #all_zips = desired_zipcodes_df.loc[:, 'zipcode']
-    print(f'len of all_zips: {len(all_zips)}')
-    expected_time = .01 * len(all_zips)
-    print(f'expected time: {expected_time} seconds')
+    logging.info(f'len of all_zips: {len(all_fips)}')
+    expected_time = .01 * len(all_fips)
+    logging.info(f'expected time: {expected_time} seconds')
 
-    rates = all_zips.map(lambda zip: slcsp(zip, plans_df, zips_df))
+    rates = all_fips.map(lambda fips: slcsp_from_fips(fips, plans_df, zips_df))
 
-    fips_list = all_zips.map(lambda zip: fips(zip, plans_df, zips_df))
+    #fips_list = all_zips.map(lambda zip: fips(zip, plans_df, zips_df))
 
     #results_df = desired_zipcodes_df.copy()
     #results_df.loc[:, 'rate'] = rates
     #results_df.loc[:, 'fips'] = fips_list
 
-    results_df = pd.DataFrame({'fips': fips_list, 'rate': rates})
+    results_df = pd.DataFrame({'fips': all_fips, 'rate': rates})
     return results_df

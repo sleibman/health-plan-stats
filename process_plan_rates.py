@@ -21,7 +21,7 @@ import timeit
 
 from healthplans import slcsp
 
-def load_and_process_csv(slcsp_file, plans_file, zips_file):
+def load_and_process_csv(plans_file, zips_file):
     """Reads input csv files into pandas DataFrames and executes core SLCSP logic.
 
     Example input files can be found at https://github.com/sleibman/health-plan-stats/sample_data
@@ -41,11 +41,10 @@ def load_and_process_csv(slcsp_file, plans_file, zips_file):
     # We allow the plan rates to be represented as floats, even though they are currency values. If the application
     # were extended to manipulate these values in any way, this would merit some care in order to ensure the desired
     # rounding behavior.
-    desired_zipcodes_df = pd.read_csv(slcsp_file, dtype={'zipcode': 'str'})
     plans_df = pd.read_csv(plans_file, dtype={'plan_id': 'str'})
     zips_df = pd.read_csv(zips_file, dtype={'zipcode': 'str', 'county_code': 'str'})
 
-    results_df = slcsp.process_rates(desired_zipcodes_df, plans_df, zips_df)
+    results_df = slcsp.process_rates(plans_df, zips_df)
     return results_df.to_csv(index=False, float_format='%.2f')
 
 if __name__ == "__main__":
@@ -61,5 +60,5 @@ if __name__ == "__main__":
     slcsp_csv = os.path.join(sample_data_dir, 'slcsp.csv')
     plans_csv = os.path.join(sample_data_dir, 'plans.csv')
     zips_csv = os.path.join(sample_data_dir, 'zips.csv')
-    print(load_and_process_csv(slcsp_csv, plans_csv, zips_csv))
-    print("The time difference is :", timeit.default_timer() - starttime)
+    print(load_and_process_csv(plans_csv, zips_csv))
+    logging.info(f"The time difference is : {timeit.default_timer() - starttime}")
